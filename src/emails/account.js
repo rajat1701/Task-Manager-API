@@ -1,22 +1,37 @@
-const sgMail = require("@sendgrid/mail");
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const nodemailer = require("nodemailer");
 
-const sendWelcomeEmail = (email, name) => {
-  sgMail.send({
-    to: email,
-    from: "rajatmalik1701@gmail.com",
-    subject: "Welcome OnBoard",
-    text: `Thank you for creating account for accessing Task Manager API, ${name}. Let us know how you get along with the app`,
+function transporter() {
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "rajatmalik1701@gmail.com",
+      pass: process.env.MAIL_APP_PASSWORD,
+    },
   });
-};
-const sendCancelationEmail = (email, name) => {
-  sgMail.send({
+}
+
+function sendWelcomeEmail(email, name) {
+  const transporterObject = transporter();
+  transporterObject.sendMail({
+    from: '"TASK MANAGER API" <rajatmalik1701@gmail.com>',
     to: email,
-    from: "rajatmalik1701@gmail.com",
-    subject: "Sorry to see you go",
-    text: `GoodBye, ${name}. We hope to see you back soon`,
+    subject: "Thanks for joining!",
+    text: `Welcome to our service, ${name}!`,
+    html: `<b>Welcome to our service, ${name}!</b>`,
   });
-};
+}
+
+function sendCancelationEmail(email, name) {
+  const transporterObject = transporter();
+  transporterObject.sendMail({
+    from: '"TASK MANAGER API" <rajatmalik1701@gmail.com>',
+    to: email,
+    subject: "We're sorry to see you leave",
+    text: `We hope to see you back again someday, ${name}!`,
+    html: `<b>We hope to see you back again someday, ${name}!</b>`,
+  });
+}
+
 module.exports = {
   sendWelcomeEmail,
   sendCancelationEmail,
